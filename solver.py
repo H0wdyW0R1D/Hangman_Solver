@@ -1,43 +1,11 @@
-import numpy as np
-import copy
+import numpy as np      # number stuffs
+import copy             # deep copy objects
+import pickle           # decode the trie into an object
+from trie import Node   # pickle needs this class to understand how to decode the trie
 
-# get list of words from txt file
-with open('english.txt', 'r') as file:
-    english = file.readlines()
-    english = [s.strip() for s in english]
-
-# build trie (very fast)
-class Node:
-    def __init__(self,letter):
-        self.c = letter
-        self.isEndPoint = False
-        self.children = []
-    
-    def __str__(self):
-        return "letter: " + (self.c) + " is end?: " + str(self.isEndPoint) + " children: " + ("".join(str(element.c) for element in self.children))
-
-def buildTrie(wordlist):
-    foo = Node("") # root node
-    for word in wordlist:
-        # add word to trie
-        current = foo # defines the node we are working with to add letters or explore to find lower nodes
-        for letter in word:
-            # for each letter in the word, determine if the child exists. If it does, set it to current, otherwise, create it
-            doesChildExist = False
-            for child in current.children:
-                if (child.c == letter):
-                    current = child
-                    doesChildExist = True
-                    break
-            # if the child doesn't exist, create it and set current to it
-            if (not doesChildExist):
-                current.children.append(Node(letter))
-                current = current.children[len(current.children)-1]
-        # when the end of the word is reached, set the endPoint flag to true
-        current.isEndPoint = True
-    return foo
-
-trie = buildTrie(english)
+# Load the trie from the trie file
+with open("trie.pkl", "rb") as file:
+    trie = pickle.load(file)
 # print(len(trie.children))
 # print(trie.children[1].children[0].isEndPoint)
 def exploreTrie(knownLetters,exclude,current,built):
@@ -69,5 +37,5 @@ def exploreTrie(knownLetters,exclude,current,built):
 def getPossibleWords(knownLetters, exclude, trie):
     # explore trie for word that meet the correct criteria
     return exploreTrie(knownLetters,exclude,trie,"")
-# possibleWords = getPossibleWords("a_t","p",trie)
-# print(possibleWords)
+possibleWords = getPossibleWords("____e","aoi",trie)
+print(possibleWords)
